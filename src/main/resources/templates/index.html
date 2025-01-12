@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My app</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-5.3.3/bootstrap.min.css">
+  <link href="css/arrow.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="js/vue-3.4.37/vue.global.js"></script>
+  <script type="text/javascript" src="js/babel-7.25.3/babel.min.js"></script>
+  <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Service state family</h1>
+      <p class="lead">Welcome to the App. Service state family</p>
+    </div>
+    <div id="app"/>
+    <div class="header clearfix">
+      <nav>
+        <a href="#" id="logoutLink">Logout</a>
+      </nav>
+    </div>
+  </div>
+  <form id="logout" action="/logout" method="POST">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  </form>
+  <script>
+    $(function(){
+      $('#logoutLink').click(function(){
+        $('#logout').submit();
+      });
+    });
+  </script>
+<script type="text/babel">
+  const { createApp, ref } = Vue
+  createApp({
+    template: `
+      <table v-for="table of data.content" border="1">
+        <caption style="caption-side: top">{{table.caption}}</caption>
+        <thead v-for="thead of table.head">
+          <tr v-for="trh of thead.rowh">
+            <th v-for="(th, i) in trh.column" :key="i" style="color: transparent"
+                :ref="(el)=>{if(i%2){reference.stateSecEl.push(el)}}"
+            >{{ i }}</th>
+          </tr>
+          <tr v-for="trd of thead.rowd" style="border-width: 1px">
+            <td v-for="state in trd.state" :colspan="state.colSpan" style="text-align: center"
+                :ref="(el)=>{reference.tdState.push({td:el,name:state.title})}"
+            >{{ state.title }}</td>
+          </tr>
+        </thead>
+        <tbody v-for="tbody of table.body">
+          <tr v-for="trArrow in tbody.rowArrow">
+            <td v-for="tdArrow in trArrow.cellArrow"
+                :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"
+                :colspan="tdArrow.colSpan"
+                :class="{cellBorderRight:tdArrow.borderRight===true,cellBorderLeft:tdArrow.borderLeft===true,firstCell:tdArrow.isFirstCell===true}" >
+              <canvas v-if="tdArrow.canvas === true" class="arrow"
+                      :ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]})}"
+              >
+              </canvas>
+            </td>
+          </tr>
+          <tr v-for="trTitle in tbody.rowTitle">
+            <td v-for="tdTitle in trTitle.cellTitle" :colspan="tdTitle.colSpan" :class="{cellBorderRight: tdTitle.borderRight === true, cellBorderLeft: tdTitle.borderLeft === true, firstCell: tdTitle.isFirstCell === true}">
+              {{ tdTitle.title }}
+            </td>
+          </tr>
+          <tr v-for="trDesc in tbody.rowDesc">
+            <td v-for="tdDesc in trDesc.cellDesc" :colspan="tdDesc.colSpan" :class="{cellBorderRight: tdDesc.borderRight === true, cellBorderLeft: tdDesc.borderLeft === true, firstCell: tdDesc.isFirstCell === true}">
+              <pre v-if="tdDesc.description">{{ tdDesc.description }}</pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `,
+    data() {
+      return {
+        reference: {
+          tdState: [],
+          tdArrow: [],
+          tempCanvas: [],
+          stateSecEl:[],
+          rowEl:[],
+        },
+        data: {
+          content: [{
+            caption: "State transition mapping for work object : wSpace",
+            head: [{
+              rowh: [{
+                column: [{}, {}, {}, {}, {}, {}, {}, {}],
+              }],
+              rowd: [
+                {state: [{title: "NULL", colSpan: 2}, {title: "wDraft", colSpan: 2}, {title: "wActive", colSpan: 2}, {title: "wRetired", colSpan: 2}]}],
+            }],
+            body: [
+              {
+                rowArrow: [{
+                  cellArrow:[{borderRight:true, isFirstCell:true}, {arrow:["NULL","wDraft"], colSpan: 2, borderLeft:true, borderRight:true, canvas:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }],
+                rowTitle: [{
+                  cellTitle: [{borderRight:true, isFirstCell:true}, {title: "wCreateDraft", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }],
+                rowDesc: [{
+                  cellDesc: [{borderRight:true, isFirstCell:true}, {description: "a\nb", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }]
+              },
+              {
+                rowArrow: [{
+                  cellArrow:[{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {arrow:["wDraft","wDraft"], colSpan: 2, canvas:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }],
+                rowTitle: [{
+                  cellTitle: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {title: "wAction", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }],
+                rowDesc: [{
+                  cellDesc: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {description: "ab\nbc", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }]
+              },
+              {
+                rowArrow: [{
+                  cellArrow:[{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {arrow:["wDraft","wRetired"], colSpan: 4, canvas:true}, {borderLeft:true}]
+                }],
+                rowTitle: [{
+                  cellTitle: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {title: "wRetire", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }],
+                rowDesc: [{
+                  cellDesc: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {description: "abc\nxyz", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
+                }]
+              }]
+          }]
+        },
+        arrow: {
+          start: null,
+          end: null,
+          action: ''
+        },
+        refTh: {
+          empty: null,
+          ref: []
+        },
+        arrElBegEnd: [],
+        arrElBegEndCount: 1,
+        arrElBegEndFillComplete: false
+      }
+    },
+    computed: {
+    },
+    methods: {
+      onMountedDrawArrow(direct, canvas) {
+        function drawPlainArrow(beginX, endX, rowY, canvas){
+          let canvasContext = canvas.getContext("2d");
+          canvasContext.fillStyle = 'steelblue';
+          canvasContext.strokeStyle = 'steelblue';
+          // draw line from start to end
+          canvasContext.beginPath();
+          canvasContext.moveTo(beginX, rowY);
+          canvasContext.lineTo(endX, rowY);
+          canvasContext.lineWidth = 2;
+          canvasContext.stroke();
+          // draw circle at beginning of line
+          canvasContext.beginPath();
+          canvasContext.arc(beginX, rowY, 4, 0, Math.PI * 2, true);
+          canvasContext.fill();
+          // draw pointer at end of line (needs rotation)
+          canvasContext.beginPath();
+          let angle = Math.atan2(0, endX - beginX);
+          canvasContext.translate(endX, rowY);
+          canvasContext.rotate(angle);
+          canvasContext.moveTo(0, 0);
+          canvasContext.lineTo(-10, -7);
+          canvasContext.lineTo(-10, 7);
+          canvasContext.lineTo(0, 0);
+          canvasContext.fill();
+        }
+        drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
+      }
+    },
+    /*async refreshStateTransit(event) {
+      event.preventDefault();
+      this.data.content.pop();
+      this.data.content.push(await this.$http.get('/statetransit/v1/wSpace'));
+      console.log("refreshStateTransit")
+    },*/
+    beforeMount() {
+      let request = new XMLHttpRequest();
+      request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
+      request.onload = () => {
+        console.dir(request.response)
+      }
+      request.send()
+    },
+    mounted() {
+      let content = JSON.stringify(this.data.content[0]);
+      console.log(content)
+      $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
+      for (let arrow of this.reference.tdArrow) {
+        let direct = true;
+        if (arrow.toStateName === arrow.fromStateName) {
+          direct = false
+        }
+        arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
+        this.onMountedDrawArrow(direct, arrow.td.firstChild)
+      }
+    },
+  }).mount('#app')
+</script>
+</body>
+</html>

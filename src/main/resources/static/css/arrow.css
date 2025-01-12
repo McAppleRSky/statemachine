@@ -1,0 +1,26 @@
+.arrow {
+  /*position: absolute;
+  top: 0px;
+  left: 0px;*/
+  /*width: 100px;*/
+  width:100%;
+  /*height:33%;*/
+  /*height: 1px;*/
+}
+/*canvas {
+  !*border: 1px solid black;*!
+  width:100%;
+  !*height: 100%;*!
+}*/
+.cellBorderLeft {
+  border-left: 1px solid #cdd0d4;
+}
+.cellBorderRight {
+  border-right: 1px solid #cdd0d4;
+}
+.cellBorderTop {
+  border-top: 1px solid #cdd0d4;
+}
+.cellBorderBottom {
+  border-bottom: 1px solid #cdd0d4;
+}
