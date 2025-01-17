@@ -34,6 +34,7 @@
       });
     });
   </script>
+  <script type="text/babel" src="js/resp-templ.js"></script>
 <script type="text/babel">
   const { createApp, ref } = Vue
   createApp({
@@ -188,15 +189,15 @@
       let request = new XMLHttpRequest();
       request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
       request.onload = () => {
-        let buildTempl = function(obj) {
+        /*let buildTempl = function(obj) {
           return null;
-        }
+        }*/
         console.log(request.response);
-        let obj = JSON.parse(request.response);
-        console.dir(obj);
-        let templ = buildTempl(obj);
+        // let obj = JSON.parse(request.response);
+        // console.dir(obj);
+        let templ = respTempl("wPeople", request);
         if (templ != null) {
-          console.dir(buildTempl(obj))
+          console.dir(templ)
         }
       }
       request.send()

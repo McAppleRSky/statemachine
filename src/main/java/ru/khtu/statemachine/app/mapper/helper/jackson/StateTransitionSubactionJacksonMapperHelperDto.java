@@ -24,13 +24,11 @@ public class StateTransitionSubactionJacksonMapperHelperDto {
         Map<StateTransitionSubactionHelper, Map<String, Object>> result = null;
         if (helpers != null && !helpers.isEmpty()) {
             Map<StateTransitionSubactionHelper, Map<String, Object>> resultMap = new LinkedHashMap<>();
-//            ArrayList<Map<String, Object>> resultList = new ArrayList<>();
             for (StateTransitionHelper helper : helpers) {
                 if (helper.getStateTransitionSubaction() != null) {
                     Map<String, Object> mapStringObject = this.jacksonObjectMapper.convertValue(
                             stateTransitionSubactionMapperHelperDto.toDto(helper.getStateTransitionSubaction()),
                             new TypeReference<Map<String, Object>>() {} );
-//                    resultList.add(mapStringObject);
                     resultMap.put(helper.getStateTransitionSubaction(), mapStringObject);
                 }
             }
