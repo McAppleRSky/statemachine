@@ -94,7 +94,7 @@
                 column: [{}, {}, {}, {}, {}, {}, {}, {}],
               }],
               rowd: [
-                {state: [{title: "NULL", colSpan: 2}, {title: "wDraft", colSpan: 2}, {title: "wActive", colSpan: 2}, {title: "wRetired", colSpan: 2}]}],
+                {state: [{title: "NULL", colSpan: 2}, {title: "wDraft", colSpan: 2}, {title: "wActive", colSpan: 2}, {title: "wRetired", colSpan: 2}]} ]
             }],
             body: [
               {
@@ -188,7 +188,16 @@
       let request = new XMLHttpRequest();
       request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
       request.onload = () => {
-        console.dir(request.response)
+        let buildTempl = function(obj) {
+          return null;
+        }
+        console.log(request.response);
+        let obj = JSON.parse(request.response);
+        console.dir(obj);
+        let templ = buildTempl(obj);
+        if (templ != null) {
+          console.dir(buildTempl(obj))
+        }
       }
       request.send()
     },

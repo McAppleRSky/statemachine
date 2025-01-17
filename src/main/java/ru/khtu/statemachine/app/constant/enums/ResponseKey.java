@@ -11,7 +11,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public enum ResponseKey {
     STATES(
-            new String("states") ),
+            new String("state") ),
     TRANSIT(
             new String("transit") ),
     SUBACTION(

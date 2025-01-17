@@ -10,12 +10,13 @@ INSERT INTO s_state(wo_name, wo_state)
             ('wPeople', 'wActive'),
             ('wPeople', 'wRetired');
 INSERT INTO s_state_transit(
-    wo_name, current_state, next_state, action_name, action_label, class_name, close_window, read_only, secondary_action)
-VALUES ('wPeople', 'null', 'wDraft', 'wCreate', 'Create', NULL, FALSE, FALSE, FALSE),
-       ('wPeople', 'wDraft', 'wActive','wActivate', 'Activate', NULL, FALSE, FALSE, TRUE),
-       ('wPeople', 'wDraft', 'wRetired', 'wRetire', 'Retire', NULL, FALSE, FALSE, FALSE),
-       ('wPeople', 'wActive', 'wRetire', 'wRetire', 'Retire', NULL, FALSE, FALSE, FALSE),
-       ('wPeople', 'wRetire', 'null', 'wDelete', 'Delete', NULL, FALSE, FALSE, FALSE);
+    wo_name, current_state, next_state, action_name, action_label, close_window, read_only, secondary_action)
+VALUES ('wPeople', 'null', 'wDraft', 'wCreate', 'Create', FALSE, FALSE, FALSE),
+       ('wPeople', 'wDraft', 'wActive','wActivate', 'Activate', FALSE, FALSE, TRUE),
+       ('wPeople', 'wDraft', 'wRetired', 'wRetire', 'Retire', FALSE, FALSE, FALSE),
+       ('wPeople', 'wActive', 'wRetired', 'wRetire', 'Retire', FALSE, FALSE, FALSE),
+       ('wPeople', 'wActive', 'wActive', 'wActivate', 'Retire', FALSE, FALSE, FALSE),
+       ('wPeople', 'wRetired', 'null', 'wDelete', 'Delete', FALSE, FALSE, FALSE);
 INSERT INTO s_statetransit_subaction(
     action_name, id_state_transit, process_name)
 SELECT t.action_name, t.id_state_transit, 'wPeople - Synchronous - when Create'

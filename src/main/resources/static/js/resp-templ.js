@@ -1,0 +1,3 @@
+var respTempl = function (response) {
+
+}

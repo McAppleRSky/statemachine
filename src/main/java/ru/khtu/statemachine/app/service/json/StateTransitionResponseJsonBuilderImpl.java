@@ -77,6 +77,9 @@ public class StateTransitionResponseJsonBuilderImpl
                                     Collections.singletonList(
                                             this.mapStateTransitionSubactionHelperToStringObject
                                                     .get(stateTransitionHelper.getStateTransitionSubaction())) );
+                } else {
+                    this.mapStateTransitionHelperToStringObject.get(stateTransitionHelper)
+                            .put(subactionKey.getString(), new ArrayList<>(0));
                 }
             }
         }

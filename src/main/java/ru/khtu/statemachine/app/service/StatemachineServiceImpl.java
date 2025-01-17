@@ -7,10 +7,8 @@ import ru.khtu.statemachine.app.constant.enums.ResponseKey;
 import ru.khtu.statemachine.app.constant.enums.WorkObject;
 import ru.khtu.statemachine.app.mapper.helper.StateTransitionMapperHelperDto;
 import ru.khtu.statemachine.app.mapper.helper.StateTransitionSubactionMapperHelperDto;
-import ru.khtu.statemachine.app.service.json.StateTransitionResponseJsonBuilder;
 import ru.khtu.statemachine.app.service.json.StateTransitionResponseJsonBuilderImpl;
 
-import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
