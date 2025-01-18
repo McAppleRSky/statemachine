@@ -33,31 +33,10 @@ public class StateTransitionJacksonMapperHelperDto {
                                 stateTransitionMapperHelperDto.toDto(helper),
                                 new TypeReference<Map<String, Object>>() {
                                 });
-                resultList.add(//mapStringObject
-                        postProc(mapStringObject) );
+                resultList.add(mapStringObject);
                 resultMap.put(helper, mapStringObject);
             }
             result = Collections.singletonMap(resultList, resultMap).entrySet().iterator().next();
-        }
-        return result;
-    }
-
-    private Map<String, Object> postProc(Map<String, Object> mapStringObject) {
-        Map<String, Object> result = new LinkedHashMap<>();
-        for (String key : mapStringObject.keySet()) {
-            if ((new String("className")).equals(key)) {
-                result.put(new String("nameOfClass"), mapStringObject.get(key));
-            } else {
-                if ((new String("methodName")).equals(key)) {
-                    result.put(new String("nameOfMethod"), mapStringObject.get(key));
-                } else {
-                    if ((new String("readOnly")).equals(key)) {
-                        result.put(new String("isReadOnly"), mapStringObject.get(key));
-                    } else {
-                        result.put(key, mapStringObject.get(key));
-                    }
-                }
-            }
         }
         return result;
     }

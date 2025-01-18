@@ -1,9 +1,7 @@
 package ru.khtu.statemachine.app.mapper.helper;
 
-import org.mapstruct.Mapper;
 import ru.khtu.statemachine.app.data.entity.StateTransitionEntity;
 import ru.khtu.statemachine.app.data.helper.StateTransitionHelper;
-import ru.khtu.statemachine.app.mapper.MapperDto;
 
 import java.util.ArrayList;
 import java.util.List;

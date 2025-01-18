@@ -23,13 +23,16 @@ public class StateTransitionDto {
 
     private String customUrl;
 
-    private String className;
+    private String nameOfClass//className
+            ;
 
-    private String methodName;
+    private String nameOfMethod//methodName
+            ;
 
     private Boolean defaultDisplay;
 
-    private Boolean readOnly;
+    private Boolean isReadOnly//readOnly
+            ;
 
     private Boolean closeWindow;
 
