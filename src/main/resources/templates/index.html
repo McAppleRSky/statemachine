@@ -88,7 +88,7 @@
           rowEl:[],
         },
         data: {
-          content: [{
+          content: [/*{
             caption: "State transition mapping for work object : wSpace",
             head: [{
               rowh: [{
@@ -131,7 +131,7 @@
                   cellDesc: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {description: "abc\nxyz", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
                 }]
               }]
-          }]
+          }*/]
         },
         arrow: {
           start: null,
@@ -150,6 +150,16 @@
     computed: {
     },
     methods: {
+      getWoObject: function() {
+        let request = new XMLHttpRequest();
+        request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
+        request.onload = () => {
+          let templ = respTempl("wPeople", request);
+          if (templ != null) {
+            this.data.content.push(templ)
+          }
+        }
+      },
       onMountedDrawArrow(direct, canvas) {
         function drawPlainArrow(beginX, endX, rowY, canvas){
           let canvasContext = canvas.getContext("2d");
@@ -186,18 +196,20 @@
       console.log("refreshStateTransit")
     },*/
     beforeMount() {
-      let request = new XMLHttpRequest();
+/*      let request = new XMLHttpRequest();
       request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
       request.onload = () => {
-        /*let buildTempl = function(obj) {
+        /!*let buildTempl = function(obj) {
           return null;
-        }*/
-        console.log(request.response);
+        }*!/
+        // console.log(request.response);
         // let obj = JSON.parse(request.response);
         // console.dir(obj);
         let templ = respTempl("wPeople", request);
         if (templ != null) {
-          console.dir(templ)
+          // console.dir(templ)
+          console.dir(this.data);
+          this.data.content.push(templ)*/
         }
       }
       request.send()
