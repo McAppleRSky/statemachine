@@ -9,39 +9,30 @@ createApp({
       <option v-for="catalogItem in catalog" :value="catalogItem.name">{{catalogItem.title}}</option>
     </select>
   </div>
-<!--  <form method="GET" action="/api/0.0.1/state-transition" @submit="onSubmitFormStateTransit(this)">-->
   <div>
     <label v-for="workObjectItem in workObject" :for="workObjectItem.name">
-<!--     name="woName"-->
       <input type="radio" :id="workObjectItem.name" :value="workObjectItem.name" @input="onInputWorkObjectItem">
       {{ workObjectItem.title }}
     </label>
   </div>
-    <!--<label :for="workObjectItem.title + 'WorkObject'"></label>
-    <input type="submit" value="submit">
-    <input type="reset" value="reset" onClick="window.location.reload()">
-  </form>-->
-  <!--<form action="index.html" method="GET" v-for="(param, key, index) in integrationParams" :key="key">
-    <input type="radio" name="name1" value="" v-model="param" :id="key">
-    <label :for="key"></label></form>-->
 </aside>
 <main>
   <table v-for="table of data.content" border="1">
-    <caption style="caption-side: top">{{table.caption}}</caption>
-    <thead v-for="thead of table.head">
-      <tr v-for="trh of thead.rowh">
+    <caption style="caption-side: top">{{table.aCaption}}</caption>
+    <thead v-for="thead of table.bHead">
+      <tr v-for="trh of thead.aRowh">
         <th v-for="(th, i) in trh.column" :key="i" style="color: transparent"
             :ref="(el)=>{if(i%2){reference.stateSecEl.push(el)}}"
         >{{ i }}</th>
       </tr>
-      <tr v-for="trd of thead.rowd" style="border-width: 1px">
+      <tr v-for="trd of thead.bRowd" style="border-width: 1px">
         <td v-for="state in trd.state" :colspan="state.colSpan" style="text-align: center"
             :ref="(el)=>{reference.tdState.push({td:el,name:state.title})}"
         >{{ state.title }}</td>
       </tr>
     </thead>
-    <tbody v-for="tbody of table.body">
-      <tr v-for="trArrow in tbody.rowArrow">
+    <tbody v-for="tbody of table.cBody">
+      <tr v-for="trArrow in tbody.aRowArrow">
         <td v-for="tdArrow in trArrow.cellArrow"
             :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"
             :colspan="tdArrow.colSpan"
@@ -145,7 +136,6 @@ createApp({
             if (this.catalog.length > 0) {
                 this.catalog = []
             }
-            // let responseCatalog = JSON.parse(request.response).catalog;
             for (let catalogItemResponse of JSON.parse(request.response).catalog) {
                 this.catalog.push(catalogItemResponse)
             }
@@ -169,49 +159,26 @@ createApp({
                             this.workObject.push(workObj)
                         }
                     }
-                    console.log("onChangeCatalogItem workObject " + this.workObject);
-                    console.dir(this.workObject)
-                    console.dir(this.catalog)
                 }
                 request.send()
             }
 
         },
-        /*onSubmitFormStateTransit: function (formObject) {
-            console.log("onSubmitFormStateTransit formObject" + formObject);
-            console.dir(formObject);
+        onInputWorkObjectItem: function(eTargetWoName) {
             let request = new XMLHttpRequest();
-            request.open(formObject.method, "/api/0.0.1/state-transition", true);
+            request.open("GET", "/api/0.0.1/state-transition/" + eTargetWoName.target.value, true);
             request.onload = () => {
-                let templ = respTempl("wPeople", request);
+                let templ = respStateTransitTempl(eTargetWoName.target.value, request);
                 if (templ != null) {
                     this.data.content.push(templ)
                 }
-            }
-            request.send()
-        },*/
-        onInputWorkObjectItem: function(e) {
-            let request = new XMLHttpRequest();
-            console.log("onInputWorkObjectItem e.target" + e.target);
-            console.dir(e.target);
-            console.log("onInputWorkObjectItem target.value.value" + e.target.value);
-            request.open("GET", "/api/0.0.1/state-transition/" + e.target.value, true);
-            request.onload = () => {
-                console.log("woResponse " + request.response);
-                console.dir(request.response);
-                /*let templ = respTempl("wPeople", request);
-                if (templ != null) {
-                    this.data.content.push(templ)
-                }*/
+                console.log("onInputWorkObjectItem data.content " + this.data.content);
+                console.dir(this.data.content)
+                // console.dir(this.catalog)
             }
             request.send()
         },
-        /*catalogItemSelect: function(el){
-            let selectCatalog = this.$el.querySelector('#selectCatalog');
-            let selectedOption = selectCatalog.options[selectCatalog.selectedIndex];
-            console.log(selectedOption);
-        },*/
-        getWoObject: function() {
+        /*getWoObject: function() {
             let request = new XMLHttpRequest();
             request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
             request.onload = () => {
@@ -221,7 +188,7 @@ createApp({
                 }
             }
             request.send()
-        },
+        },*/
         onMountedDrawArrow(direct, canvas) {
             function drawPlainArrow(beginX, endX, rowY, canvas){
                 let canvasContext = canvas.getContext("2d");
@@ -251,33 +218,10 @@ createApp({
             drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
         }
     },
-    /*async refreshStateTransit(event) {
-      event.preventDefault();
-      this.data.content.pop();
-      this.data.content.push(await this.$http.get('/statetransit/v1/wSpace'));
-      console.log("refreshStateTransit")
-    },*/
     beforeMount() {
-        /*      let request = new XMLHttpRequest();
-              request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
-              request.onload = () => {
-                /!*let buildTempl = function(obj) {
-                  return null;
-                }*!/
-                // console.log(request.response);
-                // let obj = JSON.parse(request.response);
-                // console.dir(obj);
-                let templ = respTempl("wPeople", request);
-                if (templ != null) {
-                  // console.dir(templ)
-                  console.dir(this.data);
-                  this.data.content.push(templ)
-                }
-              }
-              request.send()*/
     },
     mounted() {
-        console.log("Front start");
+/*        console.log("Front start");
         console.log("catalogSelected " + this.catalogSelected);
         let content = JSON.stringify(this.data.content[0]);
         console.log(content);
@@ -289,6 +233,6 @@ createApp({
             }
             arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
             this.onMountedDrawArrow(direct, arrow.td.firstChild)
-        }
-    },
+        }*/
+    }
 }).mount('#app')

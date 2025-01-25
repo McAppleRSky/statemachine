@@ -1,4 +1,4 @@
-var respTempl = function (woName, request) {
+var respStateTransitTempl = function (woName, request) {
     let buildTempl = function(name, data) {
         let calcTransitState = function(state, transit) {
             let result = {stateStepN: []};
@@ -6,17 +6,17 @@ var respTempl = function (woName, request) {
                 if (transit.currentState == state[j] || transit.nextState == state[j]) {
                     result.stateStepN.push(j);
                     if (transit.currentState == transit.nextState) {
-                        break;
+                        break
                     }
                     if (result.stateStepN.length === 2) {
                         if (transit.currentState == state[j]) {
                             result.stateStepR = true;
                         }
-                        break;
+                        break
                     }
                 }
             }
-            return result;
+            return result
         }
         let rowArrowBuild = function(state, transit, cellArrow) {
             let addArrowFirst = function(cell) {
@@ -85,7 +85,7 @@ var respTempl = function (woName, request) {
                         isReadOnly: transit.isReadOnly,
                         closeWindow: transit.closeWindow,
                         secondaryAction: transit.secondaryAction,
-                        colSpan: 2, borderLeft: true, borderRight: true });
+                        colSpan: 2, borderLeft: true, borderRight: true })
                 }
             }
             let addTransitLeft = function(cell, flag) {
@@ -242,7 +242,7 @@ var respTempl = function (woName, request) {
         } else {
             alert("alert content")
         }
-        return templContentObj;
+        return templContentObj
     }
     return buildTempl(woName, JSON.parse(request.response))
 }
