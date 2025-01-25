@@ -40,6 +40,7 @@ public class StatemachineController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getWorkObject(@PathVariable Map<String, String> catalog) {
         List<Object> result = new ArrayList<>();
+        String s = catalog.get(PATH_KEY_CATALOG);
         switch (Catalog.get(catalog.get(PATH_KEY_CATALOG))) {
             case CLASSIFICATION:
                 throw new NotImplementedException(
@@ -66,10 +67,13 @@ public class StatemachineController {
     private String PATH_KEY_WO_NAME = new String("woName");
 
     @RequestMapping(value = "/api/0.0.1/state-transition/{woName}", method = RequestMethod.GET)
+//    @RequestMapping(value = "/api/0.0.1/state-transition", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getStateTransition(@PathVariable Map<String, String> woName) {
+//    public ResponseEntity<Map<String, Object>> getStateTransition(@RequestParam String woName) {
         Map<String, Object> result = null;
         switch (WorkObject.get(woName.get(PATH_KEY_WO_NAME))) {
+//        switch (WorkObject.get(woName)) {
             case CLASSIFICATION:
                 throw new NotImplementedException(PATH_KEY_WO_NAME + " - " + WorkObject.CLASSIFICATION.getString());
             case W_SPACE:
