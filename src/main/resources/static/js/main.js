@@ -189,6 +189,19 @@ createApp({
             }
             request.send()
         },*/
+        onUpdatedHasArrow: function() {
+            if (this.data.content.length > 0) {
+                $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
+                for (let arrow of this.reference.tdArrow) {
+                    let direct = true;
+                    if (arrow.toStateName === arrow.fromStateName) {
+                        direct = false
+                    }
+                    arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
+                    this.onMountedDrawArrow(direct, arrow.td.firstChild)
+                }
+            }
+        },
         onMountedDrawArrow(direct, canvas) {
             function drawPlainArrow(beginX, endX, rowY, canvas){
                 let canvasContext = canvas.getContext("2d");
@@ -219,13 +232,22 @@ createApp({
         }
     },
     beforeMount() {
+        console.log("beforeMount");
+    },
+    beforeUpdated() {
+        console.log("beforeUpdated");
+    },
+    updated() {
+        console.log("updated");
+        this.onUpdatedHasArrow();
     },
     mounted() {
-/*        console.log("Front start");
+        // console.log("Front mounted");
+        // alert("mounted");
         console.log("catalogSelected " + this.catalogSelected);
-        let content = JSON.stringify(this.data.content[0]);
-        console.log(content);
-        $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
+        // let content = JSON.stringify(this.data.content[0]);
+        // console.log(content);
+        /*$(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
         for (let arrow of this.reference.tdArrow) {
             let direct = true;
             if (arrow.toStateName === arrow.fromStateName) {
