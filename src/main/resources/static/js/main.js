@@ -34,12 +34,14 @@ createApp({
     <tbody v-for="tbody of table.cBody">
       <tr v-for="trArrow in tbody.aRowArrow">
         <td v-for="tdArrow in trArrow.cellArrow"
-            :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"
+            :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();console.log('tempCanvas ' + tempCanvas);console.dir(tempCanvas);reference.tdArrow.push({td:el,stateTitle:tempCanvas.arrow,reverse:tempCanvas.reverse})}}"
             :colspan="tdArrow.colSpan"
             :class="{cellBorderRight:tdArrow.borderRight===true,cellBorderLeft:tdArrow.borderLeft===true,firstCell:tdArrow.isFirstCell===true}" >
           <canvas v-if="tdArrow.canvas === true" class="arrow"
-                  :ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]})}"
+                  :ref="(el)=>{reference.tempCanvas.push({arrow:tdArrow.arrow,reverse:tdArrow.reverse})}"
           >
+            <!--:ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"-->
+                  <!--:ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]})}"-->
           </canvas>
         </td>
       </tr>
@@ -189,21 +191,39 @@ createApp({
             }
             request.send()
         },*/
+        onUpdatedPreFormat: function() {
+            if (this.data.content.length > 0) {
+                $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth / 2})
+            }
+        },
         onUpdatedHasArrow: function() {
             if (this.data.content.length > 0) {
-                $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
+                console.log("onUpdatedHasArrow this.reference.tdArrow " + this.reference.tdArrow);
+                console.dir(this.reference);
                 for (let arrow of this.reference.tdArrow) {
-                    let direct = true;
-                    if (arrow.toStateName === arrow.fromStateName) {
-                        direct = false
+                    let direct = 0, pos = [];
+                    if (arrow.stateTitle.length === 2 /*&& arrow[0] !== arrow[1]*/) {
+                        direct = arrow.reverse === true ? -1 : 1;
+                        /*console.log("arrow.stateTitle " + arrow.stateTitle[0] + ' ' + arrow.stateTitle[1]);
+                        for (let i = 0; i < this.data.content[0].bHead[0].bRowd[0].state.length; i++) {
+                            if (arrow.stateTitle[0] === this.data.content[0].bHead[0].bRowd[0].state[i].title) {
+                                pos.push(i)
+                            } else {
+                                if (arrow.stateTitle[1] === this.data.content[0].bHead[0].bRowd[0].state[i].title) {
+                                    pos.push(i)
+                                }
+                            }
+
+                        }
+                        console.log("pos " + pos[0] + ' ' + pos[1]);
+                        direct = pos[1] - pos[0]*/
                     }
-                    arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
-                    this.onMountedDrawArrow(direct, arrow.td.firstChild)
+                    this.drawArrow(direct, arrow.td.firstChild)
                 }
             }
         },
-        onMountedDrawArrow(direct, canvas) {
-            function drawPlainArrow(beginX, endX, rowY, canvas){
+        drawArrow(direct, canvas) {
+            let drawPlainArrow = function (beginX, endX, rowY, canvas){
                 let canvasContext = canvas.getContext("2d");
                 canvasContext.fillStyle = 'steelblue';
                 canvasContext.strokeStyle = 'steelblue';
@@ -226,9 +246,25 @@ createApp({
                 canvasContext.lineTo(-10, -7);
                 canvasContext.lineTo(-10, 7);
                 canvasContext.lineTo(0, 0);
-                canvasContext.fill();
+                canvasContext.fill()
             }
-            drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
+            let beginX, endX, rowY = canvas.clientHeight / 2;
+            if (direct === 0) {
+                beginX = canvas.width / 2;
+                endX = 0
+            } else {
+                if (direct > 0) {
+                    beginX = 0;
+                    endX = canvas.width
+                } else {
+                    beginX = canvas.width;
+                    endX = 0
+                }
+            }
+            // drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
+            console.log("direct " + direct);
+            console.log("drawPlainArrow " + beginX + ' ' + endX  + ' ' + rowY);
+            drawPlainArrow(beginX, endX, rowY, canvas)
         }
     },
     beforeMount() {
@@ -240,6 +276,7 @@ createApp({
     updated() {
         console.log("updated");
         this.onUpdatedHasArrow();
+        this.onUpdatedPreFormat();
     },
     mounted() {
         // console.log("Front mounted");

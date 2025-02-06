@@ -26,7 +26,23 @@ var respStateTransitTempl = function (woName, request) {
             }
             let addArrow = function(state, cell, param, flag) {
                 if (cell.length !== 0) {
-                    cell.push({arrow: (param.stateStepN.length === 1 ? [state[param.stateStepN[0]]] : [state[param.stateStepN[0]], state[param.stateStepN[1]]]), colSpan: param.stateStepN.length === 1 ? 2 : (param.stateStepN[1] - param.stateStepN[0]) * 2, borderLeft: true, borderRight: true, canvas: true} );
+//                    cell.push({arrow: (param.stateStepN.length === 1 ? [state[param.stateStepN[0]]] : [state[param.stateStepN[0]], state[param.stateStepN[1]]]), colSpan: param.stateStepN.length === 1 ? 2 : (param.stateStepN[1] - param.stateStepN[0]) * 2, borderLeft: true, borderRight: true, canvas: true} );
+                    let arrowResult, colSpanResult;
+                    if (param.stateStepN.length === 1) {
+                        arrowResult = [state[param.stateStepN[0]]]
+                    } else {
+                        console.log("addArrow state " + state);
+                        console.dir(state);
+                        console.log("addArrow state " + param);
+                        console.dir(param);
+                        arrowResult = [state[param.stateStepN[0]], state[param.stateStepN[1]]]
+                    }
+                    if (param.stateStepN.length === 1) {
+                        colSpanResult = 2
+                    } else {
+                        colSpanResult = (param.stateStepN[1] - param.stateStepN[0]) * 2
+                    }
+                    cell.push({arrow: arrowResult, colSpan: colSpanResult, borderLeft: true, borderRight: true, canvas: true} );
                     if (param.hasOwnProperty("stateStepR")) {
                         cell[cell.length - 1].reverse = true
                     }
@@ -229,12 +245,13 @@ var respStateTransitTempl = function (woName, request) {
                 }
                 for (let i = 0; i < objReceive[0].state.length; i++) {
                     templContentObj.bHead[0].bRowd[0].state.push({title: objReceive[0].state[i], colSpan: 2})
+                    // templContentObj.bHead[0].bRowd[0].state.push({title: objReceive[0].state[i], name: objReceive[0].state[i], colSpan: 2})
                 }
                 for (let i = 0; i < objReceive[1].transit.length; i++) {
                     templContentObj.cBody.push(JSON.parse('{"aRowArrow":[{"cellArrow":[]}],"bRowTransit":[{"cellTransit":[]}],"cRowSubact":[{"cellSubact":[]}],"dRowInclus":[{"cellInclus":[]}],"eRowAttr":[{"cellAttr":[]}]}'));
                     rowArrowBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].aRowArrow[0].cellArrow);
                     rowTransitBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].bRowTransit[0].cellTransit);
-                    rowSubactBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].cRowSubact[0].cellSubact);
+                    rowSubactBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].cRowSubact[0].cellSubact)
                 }
             } else {
                 alert("alert content data")
