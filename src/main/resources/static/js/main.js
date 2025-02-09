@@ -21,7 +21,7 @@ createApp({
     <caption style="caption-side: top">{{table.aCaption}}</caption>
     <thead v-for="thead of table.bHead">
       <tr v-for="trh of thead.aRowh">
-        <th v-for="(th, i) in trh.column" :key="i" style="color: transparent"
+        <th class="thState" v-for="(th, i) in trh.column" :key="i" style="color: transparent"
             :ref="(el)=>{if(i%2){reference.stateSecEl.push(el)}}"
         >{{ i }}</th>
       </tr>
@@ -34,20 +34,18 @@ createApp({
     <tbody v-for="tbody of table.cBody">
       <tr v-for="trArrow in tbody.aRowArrow">
         <td v-for="tdArrow in trArrow.cellArrow"
-            :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();console.log('tempCanvas ' + tempCanvas);console.dir(tempCanvas);reference.tdArrow.push({td:el,stateTitle:tempCanvas.arrow,reverse:tempCanvas.reverse})}}"
+            :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,stateTitle:tempCanvas.arrow,reverse:tempCanvas.reverse})}}"
             :colspan="tdArrow.colSpan"
             :class="{cellBorderRight:tdArrow.borderRight===true,cellBorderLeft:tdArrow.borderLeft===true,firstCell:tdArrow.isFirstCell===true}" >
           <canvas v-if="tdArrow.canvas === true" class="arrow"
                   :ref="(el)=>{reference.tempCanvas.push({arrow:tdArrow.arrow,reverse:tdArrow.reverse})}"
           >
-            <!--:ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"-->
-                  <!--:ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]})}"-->
           </canvas>
         </td>
       </tr>
-      <tr v-for="trTitle in tbody.rowTitle">
-        <td v-for="tdTitle in trTitle.cellTitle" :colspan="tdTitle.colSpan" :class="{cellBorderRight: tdTitle.borderRight === true, cellBorderLeft: tdTitle.borderLeft === true, firstCell: tdTitle.isFirstCell === true}">
-          {{ tdTitle.title }}
+      <tr v-for="trTransit in tbody.bRowTransit">
+        <td v-for="tdTitle in trTransit.cellTransit" :colspan="tdTitle.colSpan" :class="{cellBorderRight: tdTitle.borderRight === true, cellBorderLeft: tdTitle.borderLeft === true, firstCell: tdTitle.isFirstCell === true}">
+          {{ tdTitle.label }}
         </td>
       </tr>
       <tr v-for="trDesc in tbody.rowDesc">
@@ -72,50 +70,7 @@ createApp({
                 rowEl:[],
             },
             data: {
-                content: [/*{
-            caption: "State transition mapping for work object : wSpace",
-            head: [{
-              rowh: [{
-                column: [{}, {}, {}, {}, {}, {}, {}, {}],
-              }],
-              rowd: [
-                {state: [{title: "NULL", colSpan: 2}, {title: "wDraft", colSpan: 2}, {title: "wActive", colSpan: 2}, {title: "wRetired", colSpan: 2}]} ]
-            }],
-            body: [
-              {
-                rowArrow: [{
-                  cellArrow:[{borderRight:true, isFirstCell:true}, {arrow:["NULL","wDraft"], colSpan: 2, borderLeft:true, borderRight:true, canvas:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }],
-                rowTitle: [{
-                  cellTitle: [{borderRight:true, isFirstCell:true}, {title: "wCreateDraft", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }],
-                rowDesc: [{
-                  cellDesc: [{borderRight:true, isFirstCell:true}, {description: "a\nb", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }]
-              },
-              {
-                rowArrow: [{
-                  cellArrow:[{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {arrow:["wDraft","wDraft"], colSpan: 2, canvas:true}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }],
-                rowTitle: [{
-                  cellTitle: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {title: "wAction", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }],
-                rowDesc: [{
-                  cellDesc: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {description: "ab\nbc", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }]
-              },
-              {
-                rowArrow: [{
-                  cellArrow:[{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {arrow:["wDraft","wRetired"], colSpan: 4, canvas:true}, {borderLeft:true}]
-                }],
-                rowTitle: [{
-                  cellTitle: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {title: "wRetire", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }],
-                rowDesc: [{
-                  cellDesc: [{borderRight:true, isFirstCell:true}, {borderLeft:true}, {borderRight:true}, {description: "abc\nxyz", colSpan: 2}, {borderLeft:true}, {borderRight:true}, {borderLeft:true}]
-                }]
-              }]
-          }*/]
+                content: []
             },
             arrow: {
                 start: null,
@@ -174,56 +129,32 @@ createApp({
                 if (templ != null) {
                     this.data.content.push(templ)
                 }
-                console.log("onInputWorkObjectItem data.content " + this.data.content);
-                console.dir(this.data.content)
-                // console.dir(this.catalog)
             }
             request.send()
         },
-        /*getWoObject: function() {
-            let request = new XMLHttpRequest();
-            request.open("GET", "/api/0.0.1/state-transition/wPeople", true);
-            request.onload = () => {
-                let templ = respTempl("wPeople", request);
-                if (templ != null) {
-                    this.data.content.push(templ)
-                }
-            }
-            request.send()
-        },*/
         onUpdatedPreFormat: function() {
             if (this.data.content.length > 0) {
-                $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth / 2})
+                // $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth / 2})
+                $(".thState").css({width: 100 / $(".thState").length + '%'})
             }
         },
         onUpdatedHasArrow: function() {
             if (this.data.content.length > 0) {
                 console.log("onUpdatedHasArrow this.reference.tdArrow " + this.reference.tdArrow);
-                console.dir(this.reference);
+                console.dir(this.reference)
                 for (let arrow of this.reference.tdArrow) {
                     let direct = 0, pos = [];
                     if (arrow.stateTitle.length === 2 /*&& arrow[0] !== arrow[1]*/) {
-                        direct = arrow.reverse === true ? -1 : 1;
-                        /*console.log("arrow.stateTitle " + arrow.stateTitle[0] + ' ' + arrow.stateTitle[1]);
-                        for (let i = 0; i < this.data.content[0].bHead[0].bRowd[0].state.length; i++) {
-                            if (arrow.stateTitle[0] === this.data.content[0].bHead[0].bRowd[0].state[i].title) {
-                                pos.push(i)
-                            } else {
-                                if (arrow.stateTitle[1] === this.data.content[0].bHead[0].bRowd[0].state[i].title) {
-                                    pos.push(i)
-                                }
-                            }
-
-                        }
-                        console.log("pos " + pos[0] + ' ' + pos[1]);
-                        direct = pos[1] - pos[0]*/
+                        direct = arrow.reverse === true ? -1 : 1
                     }
                     this.drawArrow(direct, arrow.td.firstChild)
                 }
             }
         },
         drawArrow(direct, canvas) {
-            let drawPlainArrow = function (beginX, endX, rowY, canvas){
+            let drawPlainArrow = function (beginX, endX, rowY, direct, canvas){
+                console.log("drawArrow drawPlainArrow " + beginX + ' ' + endX + ' ' + rowY);
+                console.dir(canvas);
                 let canvasContext = canvas.getContext("2d");
                 canvasContext.fillStyle = 'steelblue';
                 canvasContext.strokeStyle = 'steelblue';
@@ -248,7 +179,9 @@ createApp({
                 canvasContext.lineTo(0, 0);
                 canvasContext.fill()
             }
-            let beginX, endX, rowY = canvas.clientHeight / 2;
+            canvas.setAttribute("height",33)
+
+            let beginX, endX, rowY = 21//canvas.clientHeight / 2;
             if (direct === 0) {
                 beginX = canvas.width / 2;
                 endX = 0
@@ -261,37 +194,23 @@ createApp({
                     endX = 0
                 }
             }
-            // drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
-            console.log("direct " + direct);
-            console.log("drawPlainArrow " + beginX + ' ' + endX  + ' ' + rowY);
-            drawPlainArrow(beginX, endX, rowY, canvas)
+            drawPlainArrow(beginX, endX, rowY, direct, canvas)
         }
     },
     beforeMount() {
-        console.log("beforeMount");
+        // console.log("beforeMount");
     },
     beforeUpdated() {
-        console.log("beforeUpdated");
+        // console.log("beforeUpdated");
     },
     updated() {
         console.log("updated");
+        console.dir(this.data.content);
         this.onUpdatedHasArrow();
-        this.onUpdatedPreFormat();
+        this.onUpdatedPreFormat()
     },
     mounted() {
-        // console.log("Front mounted");
         // alert("mounted");
-        console.log("catalogSelected " + this.catalogSelected);
-        // let content = JSON.stringify(this.data.content[0]);
-        // console.log(content);
-        /*$(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
-        for (let arrow of this.reference.tdArrow) {
-            let direct = true;
-            if (arrow.toStateName === arrow.fromStateName) {
-                direct = false
-            }
-            arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
-            this.onMountedDrawArrow(direct, arrow.td.firstChild)
-        }*/
+        // console.log("catalogSelected " + this.catalogSelected);
     }
 }).mount('#app')
