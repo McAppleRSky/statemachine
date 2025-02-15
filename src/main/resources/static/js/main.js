@@ -46,11 +46,22 @@ createApp({
       <tr v-for="trTransit in tbody.bRowTransit">
         <td v-for="tdTitle in trTransit.cellTransit" :colspan="tdTitle.colSpan" :class="{cellBorderRight: tdTitle.borderRight === true, cellBorderLeft: tdTitle.borderLeft === true, firstCell: tdTitle.isFirstCell === true}">
           {{ tdTitle.label }}
+          <dl v-if="tdTitle.hasOwnProperty('name')"><dt>name:</dt><dd>&nbsp;{{ tdTitle.name }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('currentState')"><dt>State current:</dt><dd>&nbsp;{{ tdTitle.currentState }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('nextState')"><dt>State next:</dt><dd>&nbsp;{{ tdTitle.nextState }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('isReadOnly')"><dt>Read only:</dt><dd>&nbsp;{{ tdTitle.isReadOnly }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('defaultDisplay')"><dt>Display default:</dt><dd>&nbsp;{{ tdTitle.defaultDisplay }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('closeWindow')"><dt>Window close:</dt><dd>&nbsp;{{ tdTitle.closeWindow }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('nameOfClass')"><dt>Class:</dt><dd>&nbsp;{{ tdTitle.nameOfClass }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('nameOfMethod')"><dt>Method:</dt><dd>&nbsp;{{ tdTitle.nameOfMethod }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('secondaryAction')"><dt>Action:</dt><dd>&nbsp;{{ tdTitle.secondaryAction }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('customUrl')"><dt>Url:</dt><dd>&nbsp;{{ tdTitle.customUrl }}</dd></dl>
         </td>
       </tr>
-      <tr v-for="trDesc in tbody.rowDesc">
-        <td v-for="tdDesc in trDesc.cellDesc" :colspan="tdDesc.colSpan" :class="{cellBorderRight: tdDesc.borderRight === true, cellBorderLeft: tdDesc.borderLeft === true, firstCell: tdDesc.isFirstCell === true}">
-          <pre v-if="tdDesc.description">{{ tdDesc.description }}</pre>
+      <tr v-for="trSubact in tbody.cRowSubact">
+        <td v-for="tdSubact in trSubact.cellSubact" :colspan="tdSubact.colSpan" :class="{cellBorderRight: tdSubact.borderRight === true, cellBorderLeft: tdSubact.borderLeft === true, firstCell: tdSubact.isFirstCell === true}">
+          <dl v-if="tdSubact.hasOwnProperty('actionName')"><dt>Subaction:</dt><dd>&nbsp;{{ tdSubact.actionName }}</dd></dl>
+          <dl v-if="tdSubact.hasOwnProperty('processName')"><dt>Process:</dt><dd>&nbsp;{{ tdSubact.processName }}</dd></dl>
         </td>
       </tr>
     </tbody>

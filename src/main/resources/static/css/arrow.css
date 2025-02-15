@@ -24,3 +24,9 @@
 .cellBorderBottom {
   border-bottom: 1px solid #cdd0d4;
 }
+dl dt, dl dd {
+  display: inline;/*line-height: 1.75rem;*/
+}
+dl {
+  margin-bottom: 0;/*line-height: 1.75rem;*/
+}
