@@ -25,7 +25,19 @@ public class WPeopleEntity {
     @Column(name="wFamilyNameTX", length=150, nullable=false)
     private String wFamilyNameTX;
 
-    @Column(name="wSurnameTX", length=100, nullable=false)
+    @Column(name="wSurnameTX", length=150, nullable=false)
     private String wSurnameTX;
+
+    @Column(name="wRecordStateSY", length=100, nullable=false)
+    private String wRecordStateSY;
+
+    @Column(name="wPreviousStateSY", length=100, nullable=false)
+    private String wPreviousStateSY;
+
+    @Column(name="wStatusCL", length=150, nullable=false)
+    private String wStatusCL;
+
+    @Column(name="wPreviousStatusCL", length=150, nullable=false)
+    private String wPreviousStatusCL;
 
 }
