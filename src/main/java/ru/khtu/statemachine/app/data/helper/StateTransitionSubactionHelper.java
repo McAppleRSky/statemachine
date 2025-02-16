@@ -6,6 +6,8 @@ import lombok.Setter;
 import ru.khtu.statemachine.app.data.dto.StateTransitionSubactionAttributeDto;
 import ru.khtu.statemachine.app.data.dto.StateTransitionSubactionInclusionDto;
 
+import java.util.List;
+
 @Getter @Setter
 @RequiredArgsConstructor
 public class StateTransitionSubactionHelper {
@@ -18,8 +20,8 @@ public class StateTransitionSubactionHelper {
 
     private final Long idStateTransit;
 
-    private StateTransitionSubactionInclusionDto stateTransitionSubactionInclusionDto;
+    private List<StateTransitionSubactionInclusionDto> stateTransitionSubactionInclusionDto;
 
-    private StateTransitionSubactionAttributeDto stateTransitionSubactionAttributeDto;
+    private List<StateTransitionSubactionAttributeDto> stateTransitionSubactionAttributeDto;
 
 }

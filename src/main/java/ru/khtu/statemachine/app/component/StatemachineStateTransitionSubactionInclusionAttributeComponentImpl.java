@@ -22,12 +22,12 @@ public class StatemachineStateTransitionSubactionInclusionAttributeComponentImpl
     @Override
     public void getByStateTransitionsSubactionAndPut(StateTransitionSubactionHelper stateTransitionSubaction) {
         stateTransitionSubaction.setStateTransitionSubactionInclusionDto(
-                stateTransitSubactionInclusionMapper.toDto(
+                stateTransitSubactionInclusionMapper.toDtos(
                         stateTransitionSubactionInclusionRepository.findByStateTransitionIdAndStateTransitionSubactionId(
                                 stateTransitionSubaction.getIdStateTransit(),
                                 stateTransitionSubaction.getId() ) ) );
         stateTransitionSubaction.setStateTransitionSubactionAttributeDto(
-                stateTransitSubactionAttributeMapper.toDto(
+                stateTransitSubactionAttributeMapper.toDtos(
                         stateTransitionSubactionAttributeRepository.findByStateTransitionIdAndStateTransitionSubactionId(
                                 stateTransitionSubaction.getIdStateTransit(),
                                 stateTransitionSubaction.getId() ) ) );
