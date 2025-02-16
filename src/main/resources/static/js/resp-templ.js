@@ -257,8 +257,6 @@ var respStateTransitTempl = function (woName, request) {
                 alert("alert content data")
             }
         } else {
-            console.log("content name: " + name);
-            console.dir(data);
             alert("alert content");
         }
         return templContentObj

@@ -16,6 +16,9 @@ public class StateTransitionSubactionInclusionEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(name = "action_name", length=100, nullable = false)
+    private String actionName;
+
     @Column(name = "inclusion")
     private Boolean inclusion;
 

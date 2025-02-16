@@ -136,9 +136,13 @@ createApp({
             let request = new XMLHttpRequest();
             request.open("GET", "/api/0.0.1/state-transition/" + eTargetWoName.target.value, true);
             request.onload = () => {
+                console.log("request")
+                console.dir(request)
                 let templ = respStateTransitTempl(eTargetWoName.target.value, request);
                 if (templ != null) {
                     this.data.content.push(templ)
+                    console.log("templ")
+                    console.dir(templ)
                 }
             }
             request.send()

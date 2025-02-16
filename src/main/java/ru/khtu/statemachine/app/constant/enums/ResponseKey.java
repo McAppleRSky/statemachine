@@ -15,7 +15,12 @@ public enum ResponseKey {
     TRANSIT(
             new String("transit") ),
     SUBACTION(
-            new String("subaction") );
+            new String("subaction") ),
+    INCLUSION(
+            new String("inclusion") ),
+    ATTRIBUTE(
+            new String("attribute") )
+    ;
 
     private final String string;
 

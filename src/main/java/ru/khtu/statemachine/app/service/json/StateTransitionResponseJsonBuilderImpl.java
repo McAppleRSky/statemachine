@@ -7,6 +7,8 @@ import ru.khtu.statemachine.app.constant.enums.WorkObject;
 import ru.khtu.statemachine.app.data.dto.StateDto;
 import ru.khtu.statemachine.app.data.helper.StateTransitionHelper;
 import ru.khtu.statemachine.app.data.helper.StateTransitionSubactionHelper;
+import ru.khtu.statemachine.app.mapper.AttributeMapper;
+import ru.khtu.statemachine.app.mapper.InclusionMapper;
 import ru.khtu.statemachine.app.mapper.StateMapperDto;
 import ru.khtu.statemachine.app.mapper.helper.jackson.StateTransitionJacksonMapperHelperDto;
 import ru.khtu.statemachine.app.mapper.helper.StateTransitionMapperHelperDto;
@@ -37,16 +39,14 @@ public class StateTransitionResponseJsonBuilderImpl
     }
 
     @Override
-    public StateTransitionResponseJsonBuilder setState(ResponseKey statesKey) {
+    public StateTransitionResponseJsonBuilder setState() {
         super.stateTransition.add(
-                Collections.singletonMap(statesKey.getString(), this.stateMapper.toStrings(this.stateData) ) );
+                Collections.singletonMap(ResponseKey.STATES.getString(), this.stateMapper.toStrings(this.stateData) ) );
         return this;
     }
 
     @Override
-    public StateTransitionResponseJsonBuilder setTransition(
-            ResponseKey transitionKey,
-            StateTransitionMapperHelperDto stateTransitionMapperHelperDto ) {
+    public StateTransitionResponseJsonBuilder setTransition(StateTransitionMapperHelperDto stateTransitionMapperHelperDto) {
         Map.Entry<
                 ArrayList<Map<String, Object>>,
                 Map<StateTransitionHelper, Map<String, Object>> > entryMapList
@@ -54,7 +54,7 @@ public class StateTransitionResponseJsonBuilderImpl
                         stateTransitionMapperHelperDto ).mapHelperToStringObject(this.tarnsitionData);
         if (entryMapList != null) {
             super.stateTransition.add(
-                    Collections.singletonMap(transitionKey.getString(), entryMapList.getKey()) );
+                    Collections.singletonMap(ResponseKey.TRANSIT.getString(), entryMapList.getKey()) );
             this.mapStateTransitionHelperToStringObject = entryMapList.getValue();
         }
         return this;
@@ -62,7 +62,6 @@ public class StateTransitionResponseJsonBuilderImpl
 
     @Override
     public StateTransitionResponseJsonBuilder setSubaction(
-            ResponseKey subactionKey,
             StateTransitionSubactionMapperHelperDto stateTransitionSubactionMapperHelperDto ) {
         this.mapStateTransitionSubactionHelperToStringObject
                 = new StateTransitionSubactionJacksonMapperHelperDto(
@@ -73,13 +72,13 @@ public class StateTransitionResponseJsonBuilderImpl
                         && this.mapStateTransitionHelperToStringObject != null) {
                     this.mapStateTransitionHelperToStringObject.get(stateTransitionHelper)
                             .put(
-                                    subactionKey.getString(),
+                                    ResponseKey.SUBACTION.getString(),
                                     Collections.singletonList(
                                             this.mapStateTransitionSubactionHelperToStringObject
                                                     .get(stateTransitionHelper.getStateTransitionSubaction())) );
                 } else {
                     this.mapStateTransitionHelperToStringObject.get(stateTransitionHelper)
-                            .put(subactionKey.getString(), new ArrayList<>(0));
+                            .put(ResponseKey.SUBACTION.getString(), new ArrayList<>(0));
                 }
             }
         }
@@ -87,22 +86,34 @@ public class StateTransitionResponseJsonBuilderImpl
     }
 
     @Override
-    public StateTransitionResponseJsonBuilder setInclusion(List<Map<String, Object>> subactionDao) {
+    public StateTransitionResponseJsonBuilder setInclusion(/*StateTransitSubactionInclusionMapperDto stateTransitSubactionInclusionMapperDto*/) {
         for (StateTransitionHelper stateTransitionHelper : this.tarnsitionData) {
-            if (stateTransitionHelper.getStateTransitionSubaction() != null
-                    && stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionInclusionDto() != null) {
-                throw new NotImplementedException("Inclusion not implemented");
+            if ( stateTransitionHelper.getStateTransitionSubaction() != null
+                    && stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionInclusionDto() != null
+                    && !stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionInclusionDto().isEmpty() ) {
+                StateTransitionSubactionHelper stateTransitionSubaction = stateTransitionHelper.getStateTransitionSubaction();
+                Map<String, Object> stringObjectMap = this.mapStateTransitionSubactionHelperToStringObject.get(stateTransitionSubaction);
+                stringObjectMap.put(
+                        ResponseKey.INCLUSION.getString(),
+                        InclusionMapper.mapListToListMap(stateTransitionSubaction.getStateTransitionSubactionInclusionDto()) );
+//                throw new NotImplementedException("Inclusion not implemented");
             }
         }
         return this;
     }
 
     @Override
-    public StateTransitionResponseJsonBuilder setAttribute(List<Map<String, Object>> subactionDao) {
+    public StateTransitionResponseJsonBuilder setAttribute(/*StateTransitSubactionAttributeMapperDto stateTransitSubactionAttributeMapperDto*/) {
         for (StateTransitionHelper stateTransitionHelper : this.tarnsitionData) {
-            if (stateTransitionHelper.getStateTransitionSubaction() != null
-                    && stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionAttributeDto() != null) {
-                throw new NotImplementedException("Attribute not implemented");
+            if ( stateTransitionHelper.getStateTransitionSubaction() != null
+                    && stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionAttributeDto() != null
+                    && !stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionAttributeDto().isEmpty() ) {
+                StateTransitionSubactionHelper stateTransitionSubaction = stateTransitionHelper.getStateTransitionSubaction();
+                Map<String, Object> stringObjectMap = this.mapStateTransitionSubactionHelperToStringObject.get(stateTransitionSubaction);
+                stringObjectMap.put(
+                        ResponseKey.ATTRIBUTE.getString(),
+                        AttributeMapper.mapListToListMap(stateTransitionSubaction.getStateTransitionSubactionAttributeDto()) );
+//                throw new NotImplementedException("Attribute not implemented");
             }
         }
         return this;

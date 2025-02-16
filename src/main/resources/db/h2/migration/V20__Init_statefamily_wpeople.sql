@@ -27,13 +27,13 @@ SELECT t.action_name, t.id_state_transit, 'wPeople - Synchronous - when Create'
   FROM s_state_transit t
  WHERE t.wo_name = 'wPeople' AND t.current_state = 'null' AND t.next_state = 'wDraft' AND t.action_name = 'wCreate';
 INSERT INTO s_statetransit_subact_inclusion(
-    inclusion, exclusion, id_state_transit, id_statetransit_subact)
-SELECT TRUE, FALSE, t.id_state_transit, s.id_statetransit_subact
+    action_name, inclusion, exclusion, id_state_transit, id_statetransit_subact)
+SELECT 'transitA', TRUE, FALSE, t.id_state_transit, s.id_statetransit_subact
   FROM s_state_transit t JOIN s_statetransit_subaction s ON t.id_state_transit = s.id_state_transit
 WHERE t.wo_name = 'wPeople' AND t.current_state = 'null' AND t.next_state = 'wDraft' AND t.action_name = 'wCreate';
 INSERT INTO s_statetransit_subact_inclusion(
-    inclusion, exclusion, id_state_transit, id_statetransit_subact)
-SELECT FALSE, TRUE, t.id_state_transit, s.id_statetransit_subact
+    action_name, inclusion, exclusion, id_state_transit, id_statetransit_subact)
+SELECT 'transitB', FALSE, TRUE, t.id_state_transit, s.id_statetransit_subact
 FROM s_state_transit t JOIN s_statetransit_subaction s ON t.id_state_transit = s.id_state_transit
 WHERE t.wo_name = 'wPeople' AND t.current_state = 'null' AND t.next_state = 'wDraft' AND t.action_name = 'wCreate';
 INSERT INTO s_statetransit_subact_attribute(
