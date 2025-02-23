@@ -46,7 +46,7 @@ createApp({
       <tr v-for="trTransit in tbody.bRowTransit">
         <td v-for="tdTitle in trTransit.cellTransit" :colspan="tdTitle.colSpan" :class="{cellBorderRight: tdTitle.borderRight === true, cellBorderLeft: tdTitle.borderLeft === true, firstCell: tdTitle.isFirstCell === true}">
           {{ tdTitle.label }}
-          <dl v-if="tdTitle.hasOwnProperty('name')"><dt>name:</dt><dd>&nbsp;{{ tdTitle.name }}</dd></dl>
+          <div><dl v-if="tdTitle.hasOwnProperty('name')"><dt>name:</dt><dd>&nbsp;{{ tdTitle.name }}</dd></dl>
           <dl v-if="tdTitle.hasOwnProperty('currentState')"><dt>State current:</dt><dd>&nbsp;{{ tdTitle.currentState }}</dd></dl>
           <dl v-if="tdTitle.hasOwnProperty('nextState')"><dt>State next:</dt><dd>&nbsp;{{ tdTitle.nextState }}</dd></dl>
           <dl v-if="tdTitle.hasOwnProperty('isReadOnly')"><dt>Read only:</dt><dd>&nbsp;{{ tdTitle.isReadOnly }}</dd></dl>
@@ -55,13 +55,25 @@ createApp({
           <dl v-if="tdTitle.hasOwnProperty('nameOfClass')"><dt>Class:</dt><dd>&nbsp;{{ tdTitle.nameOfClass }}</dd></dl>
           <dl v-if="tdTitle.hasOwnProperty('nameOfMethod')"><dt>Method:</dt><dd>&nbsp;{{ tdTitle.nameOfMethod }}</dd></dl>
           <dl v-if="tdTitle.hasOwnProperty('secondaryAction')"><dt>Action:</dt><dd>&nbsp;{{ tdTitle.secondaryAction }}</dd></dl>
-          <dl v-if="tdTitle.hasOwnProperty('customUrl')"><dt>Url:</dt><dd>&nbsp;{{ tdTitle.customUrl }}</dd></dl>
+          <dl v-if="tdTitle.hasOwnProperty('customUrl')"><dt>Url:</dt><dd>&nbsp;{{ tdTitle.customUrl }}</dd></dl></div>
         </td>
       </tr>
       <tr v-for="trSubact in tbody.cRowSubact">
         <td v-for="tdSubact in trSubact.cellSubact" :colspan="tdSubact.colSpan" :class="{cellBorderRight: tdSubact.borderRight === true, cellBorderLeft: tdSubact.borderLeft === true, firstCell: tdSubact.isFirstCell === true}">
           <dl v-if="tdSubact.hasOwnProperty('actionName')"><dt>Subaction:</dt><dd>&nbsp;{{ tdSubact.actionName }}</dd></dl>
           <dl v-if="tdSubact.hasOwnProperty('processName')"><dt>Process:</dt><dd>&nbsp;{{ tdSubact.processName }}</dd></dl>
+        </td>
+      </tr>
+      <tr v-for="trInclus in tbody.dRowInclus">
+        <td v-for="tdInclus in trInclus.cellInclus" :colspan="tdInclus.colSpan" :class="{cellBorderRight: tdInclus.borderRight === true, cellBorderLeft: tdInclus.borderLeft === true, firstCell: tdInclus.isFirstCell === true}">
+          <table 
+          :ref='(tbl)=>{console.log("tbl");console.dir(tdInclus);let data=tdInclus.inclusion,col=["Transition","Inclusion","Exclusion"],thead=document.createElement("thead"),row,cell,txt,el;rowh=document.createElement("tr");for(let i=0;i<data.length;i++){if(data[i].inclusion===data[i].exclusion){alert("inclusion === exclusion for transition: "+data[i].actionName)}row=tbl.insertRow();for(let j=0;j<col.length;j++){cell=row.insertCell();cell.style.border="1px solid black";switch(j){case 0:txt=document.createTextNode(data[i].actionName);cell.appendChild(txt);break;case 1:el=document.createElement("input");el.type="radio";if(data[i].inclusion){el.setAttribute("checked","")}el.setAttribute("disabled","");cell.appendChild(el);break;case 2:el=document.createElement("input");el.type="radio";if(data[i].exclusion){el.setAttribute("checked","")}el.setAttribute("disabled","");cell.appendChild(el);break}}}row=window.parent.document.createElement("tr");thead.appendChild(row);for(let i=0;i<col.length;i++){cell=document.createElement("th");cell.style.border="1px solid black";txt=document.createTextNode(col[i]);cell.appendChild(txt);row.appendChild(cell)}tbl.insertBefore(thead,tbl.children[0])}'>
+          </table>
+        </td>
+      </tr>
+      <tr v-for="trAttr in tbody.cRowAttr">
+        <td v-for="tdAttr in trAttr.cellAttr" :colspan="tdSubact.colSpan" :class="{cellBorderRight: tdAttr.borderRight === true, cellBorderLeft: tdAttr.borderLeft === true, firstCell: tdAttr.isFirstCell === true}">
+          <dl v-if="tdAttr.hasOwnProperty('actionName')"><dt>Subaction:</dt><dd>&nbsp;{{ tdSubact.actionName }}</dd></dl>
         </td>
       </tr>
     </tbody>

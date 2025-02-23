@@ -26,15 +26,10 @@ var respStateTransitTempl = function (woName, request) {
             }
             let addArrow = function(state, cell, param, flag) {
                 if (cell.length !== 0) {
-//                    cell.push({arrow: (param.stateStepN.length === 1 ? [state[param.stateStepN[0]]] : [state[param.stateStepN[0]], state[param.stateStepN[1]]]), colSpan: param.stateStepN.length === 1 ? 2 : (param.stateStepN[1] - param.stateStepN[0]) * 2, borderLeft: true, borderRight: true, canvas: true} );
                     let arrowResult, colSpanResult;
                     if (param.stateStepN.length === 1) {
                         arrowResult = [state[param.stateStepN[0]]]
                     } else {
-                        console.log("addArrow state " + state);
-                        console.dir(state);
-                        console.log("addArrow state " + param);
-                        console.dir(param);
                         arrowResult = [state[param.stateStepN[0]], state[param.stateStepN[1]]]
                     }
                     if (param.stateStepN.length === 1) {
@@ -147,15 +142,15 @@ var respStateTransitTempl = function (woName, request) {
                 }
             }
         }
-        let rowSubactBuild = function(state, transit, cellSubact) {
+        let rowSubactBuild = function(state, transitStruct, cellSubact) {
             let addSubactFirst = function(cell) {
                 if (cell.length === 0) {
                     cell.push({borderRight:true, isFirstCell:true})
                 }
             }
-            let addSubact = function(cell, transit) {
+            let addSubact = function(cell, transitStruct) {
                 if (cell.length !== 0) {
-                    cell.push( {actionName: transit.subaction[0].actionName, processName: transit.subaction[0].processName, colSpan: 2, borderLeft: true, borderRight: true} );
+                    cell.push( {actionName: transitStruct.subaction[0].actionName, processName: transitStruct.subaction[0].processName, colSpan: 2, borderLeft: true, borderRight: true} );
                 }
             }
             let addSubactLeft = function(cell, flag) {
@@ -166,18 +161,18 @@ var respStateTransitTempl = function (woName, request) {
                 cell.push({borderRight:true});
                 flag[0] = false
             }
-            if (state.length > 0 && transit.hasOwnProperty("subaction") && transit.subaction.length > 0) {
+            if (state.length > 0 && transitStruct.hasOwnProperty("subaction") && transitStruct.subaction.length > 0) {
                 if (state.length === 1) { // ? 1 cell
-                    cBodyResult.rowTransit.push(JSON.parse('{"borderRight":true, "isFirstCell":true}, {"actionName": ' + transit.subaction[0].actionName + ', "processName": ' + transit.subaction[0].processName + ', "colSpan": 2, "borderLeft":true, "borderRight":true}'))
+                    cBodyResult.rowTransit.push(JSON.parse('{"borderRight":true, "isFirstCell":true}, {"actionName": ' + transitStruct.subaction[0].actionName + ', "processName": ' + transitStruct.subaction[0].processName + ', "colSpan": 2, "borderLeft":true, "borderRight":true}'))
                 } else {
-                    let transitRowParam = calcTransitState(state, transit),
+                    let transitRowParam = calcTransitState(state, transitStruct),
                         right = [false];
                     for (let k = 0; k < (state.length * 2 - (transitRowParam.stateStepN.length === 1 ? (1 * 2 - 1) : (transitRowParam.stateStepN[1] - transitRowParam.stateStepN[0]) * 2 - 1)); k++) {
                         if (k === 0) {
                             addSubactFirst(cellSubact)
                         } else {
                             if ( (transitRowParam.stateStepN[0] * 2 + 1) === k ) {
-                                addSubact(cellSubact, transit)
+                                addSubact(cellSubact, transitStruct)
                             } else {
                                 if (right[0] === true) {
                                     addSubactRight(cellSubact, right)
@@ -190,15 +185,21 @@ var respStateTransitTempl = function (woName, request) {
                 }
             }
         }
-        let rowInclBuild = function(state, transit, cellIncl) {
+        let rowInclBuild = function(state, transitStruct, cellIncl) {
             let addInclFirst = function(cell) {
                 if (cell.length === 0) {
                     cell.push({borderRight:true, isFirstCell:true})
                 }
             }
-            let addInclct = function(cell, transit) {
+            let addInclus = function(cell, transitStruct) {
+                let inclusionTemp = [];
                 if (cell.length !== 0) {
-                    cell.push( {actionName: transit.subaction[0].actionName, processName: transit.subaction[0].processName, colSpan: 2, borderLeft: true, borderRight: true} );
+                    for (const inclusionCurrent of transitStruct.subaction[0].inclusion) {
+                        inclusionTemp.push({actionName: inclusionCurrent.actionName,
+                            inclusion: inclusionCurrent.inclusion,
+                            exclusion: inclusionCurrent.exclusion})
+                    }
+                    cell.push({inclusion: inclusionTemp, colSpan: 2, borderLeft: true, borderRight: true })
                 }
             }
             let addInclLeft = function(cell, flag) {
@@ -209,18 +210,52 @@ var respStateTransitTempl = function (woName, request) {
                 cell.push({borderRight:true});
                 flag[0] = false
             }
-            if (state.length > 0 && transit.hasOwnProperty("subaction") && transit.subaction.length > 0 && transit.subaction.hasOwnProperty("inclusion") && transit.subaction.inclusion.length > 0) {
+            if (state.length > 0 && transitStruct.hasOwnProperty("subaction") && transitStruct.subaction.length === 1
+                && transitStruct.subaction[0].hasOwnProperty("inclusion") && transitStruct.subaction[0].inclusion.length > 0) {
+                if (state.length === 1) { // ? 1 cell
+                    cBodyResult.rowTransit.push(
+                        JSON.parse(
+                            '{"borderRight":true, "isFirstCell":true}, {"inclusion": [], "colSpan": 2, "borderLeft":true, "borderRight":true}' ) )
+                    for (const inclusionCurrent of transitStruct.subaction[0].inclusion) {
+                        cBodyResult.rowTransit[1].inclusion.push('{"actionName": ' + inclusionCurrent.actionName
+                            + ', "inclusion": ' + inclusionCurrent.inclusion
+                            + ', "exclusion": ' + inclusionCurrent.exclusion + '}')
+                    }
+                } else {
+                    let transitRowParam = calcTransitState(state, transitStruct),
+                        right = [false];
+                    for (let k = 0; k < (state.length * 2 - (transitRowParam.stateStepN.length === 1 ? (1 * 2 - 1) : (transitRowParam.stateStepN[1] - transitRowParam.stateStepN[0]) * 2 - 1)); k++) {
+                        if (k === 0) {
+                            addInclFirst(cellIncl)
+                        } else {
+                            if ( (transitRowParam.stateStepN[0] * 2 + 1) === k ) {
+                                addInclus(cellIncl, transitStruct)
+                            } else {
+                                if (right[0] === true) {
+                                    addInclRight(cellIncl, right)
+                                } else {
+                                    addInclLeft(cellIncl, right)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-        let rowAttrBuild = function(state, transit, cellAttr) {
+        let rowAttrBuild = function(state, transitStruct, cellAttr) {
             let addAttrFirst = function(cell) {
                 if (cell.length === 0) {
                     cell.push({borderRight:true, isFirstCell:true})
                 }
             }
-            let addAttr = function(cell, transit) {
+            let addAttr = function(cell, transitStruct) {
+                let attributeTemp = [];
                 if (cell.length !== 0) {
-                    cell.push( {actionName: transit.subaction[0].actionName, processName: transit.subaction[0].processName, colSpan: 2, borderLeft: true, borderRight: true} );
+                    for (const attributeCurrent of transitStruct.subaction[0].attribute) {
+                        attributeTemp.push({fieldName: attributeCurrent.fieldName,
+                            constValue: attributeCurrent.constValue})
+                    }
+                    cell.push( {attribute: attributeTemp, colSpan: 2, borderLeft: true, borderRight: true} )
                 }
             }
             let addAttrLeft = function(cell, flag) {
@@ -231,7 +266,35 @@ var respStateTransitTempl = function (woName, request) {
                 cell.push({borderRight:true});
                 flag[0] = false
             }
-            if (state.length > 0 && transit.hasOwnProperty("subaction") && transit.subaction.length > 0 && transit.subaction.hasOwnProperty("attribute") && transit.subaction.attribute.length > 0) {
+            if (state.length > 0 && transitStruct.hasOwnProperty("subaction") && transitStruct.subaction.length > 0
+                && transitStruct.subaction[0].hasOwnProperty("attribute") && transitStruct.subaction[0].attribute.length > 0) {
+                if (state.length === 1) { // ? 1 cell
+                    cBodyResult.rowTransit.push(
+                        JSON.parse(
+                            '{"borderRight":true, "isFirstCell":true}, {"attribute": [], "colSpan": 2, "borderLeft":true, "borderRight":true}' ) );
+                    for (const attributeCurrent of transitStruct.subaction[0].attribute) {
+                        cBodyResult.rowTransit[1].attribute.push('{"fieldName": ' + attributeCurrent.fieldName
+                            + ', "constValue": ' + attributeCurrent.constValue + '}')
+                    }
+                } else {
+                    let transitRowParam = calcTransitState(state, transitStruct),
+                        right = [false];
+                    for (let k = 0; k < (state.length * 2 - (transitRowParam.stateStepN.length === 1 ? (1 * 2 - 1) : (transitRowParam.stateStepN[1] - transitRowParam.stateStepN[0]) * 2 - 1)); k++) {
+                        if (k === 0) {
+                            addAttrFirst(cellAttr)
+                        } else {
+                            if ( (transitRowParam.stateStepN[0] * 2 + 1) === k ) {
+                                addAttr(cellAttr, transitStruct)
+                            } else {
+                                if (right[0] === true) {
+                                    addAttrRight(cellAttr, right)
+                                } else {
+                                    addAttrLeft(cellAttr, right)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         let templContentObj;
@@ -245,13 +308,14 @@ var respStateTransitTempl = function (woName, request) {
                 }
                 for (let i = 0; i < objReceive[0].state.length; i++) {
                     templContentObj.bHead[0].bRowd[0].state.push({title: objReceive[0].state[i], colSpan: 2})
-                    // templContentObj.bHead[0].bRowd[0].state.push({title: objReceive[0].state[i], name: objReceive[0].state[i], colSpan: 2})
                 }
                 for (let i = 0; i < objReceive[1].transit.length; i++) {
                     templContentObj.cBody.push(JSON.parse('{"aRowArrow":[{"cellArrow":[]}],"bRowTransit":[{"cellTransit":[]}],"cRowSubact":[{"cellSubact":[]}],"dRowInclus":[{"cellInclus":[]}],"eRowAttr":[{"cellAttr":[]}]}'));
                     rowArrowBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].aRowArrow[0].cellArrow);
                     rowTransitBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].bRowTransit[0].cellTransit);
-                    rowSubactBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].cRowSubact[0].cellSubact)
+                    rowSubactBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].cRowSubact[0].cellSubact);
+                    rowInclBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].dRowInclus[0].cellInclus);
+                    rowAttrBuild(objReceive[0].state, objReceive[1].transit[i], templContentObj.cBody[i].eRowAttr[0].cellAttr)
                 }
             } else {
                 alert("alert content data")
