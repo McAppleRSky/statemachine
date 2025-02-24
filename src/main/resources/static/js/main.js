@@ -66,13 +66,40 @@ createApp({
       </tr>
       <tr v-for="trInclus in tbody.dRowInclus">
         <td v-for="tdInclus in trInclus.cellInclus" :colspan="tdInclus.colSpan" :class="{cellBorderRight: tdInclus.borderRight === true, cellBorderLeft: tdInclus.borderLeft === true, firstCell: tdInclus.isFirstCell === true}">
-          <table 
-          :ref='(tbl)=>{console.log("tbl");console.dir(tdInclus);let data=tdInclus.inclusion,col=["Transition","Inclusion","Exclusion"],thead=document.createElement("thead"),row,cell,txt,el;rowh=document.createElement("tr");for(let i=0;i<data.length;i++){if(data[i].inclusion===data[i].exclusion){alert("inclusion === exclusion for transition: "+data[i].actionName)}row=tbl.insertRow();for(let j=0;j<col.length;j++){cell=row.insertCell();cell.style.border="1px solid black";switch(j){case 0:txt=document.createTextNode(data[i].actionName);cell.appendChild(txt);break;case 1:el=document.createElement("input");el.type="radio";if(data[i].inclusion){el.setAttribute("checked","")}el.setAttribute("disabled","");cell.appendChild(el);break;case 2:el=document.createElement("input");el.type="radio";if(data[i].exclusion){el.setAttribute("checked","")}el.setAttribute("disabled","");cell.appendChild(el);break}}}row=window.parent.document.createElement("tr");thead.appendChild(row);for(let i=0;i<col.length;i++){cell=document.createElement("th");cell.style.border="1px solid black";txt=document.createTextNode(col[i]);cell.appendChild(txt);row.appendChild(cell)}tbl.insertBefore(thead,tbl.children[0])}'>
+          <table v-if='tdInclus.hasOwnProperty("inclusion") && tdInclus.inclusion.length > 0'>
+            <thead>
+              <tr>
+                <th style="border: 1px solid black;">Transition</th>
+                <th style="border: 1px solid black;">Inclusion</th>
+                <th style="border: 1px solid black;">Exclusion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="tblTrInclus in tdInclus.inclusion">
+                <td style="border: 1px solid black;">{{ tblTrInclus.actionName }}</td>
+                <td style="border: 1px solid black;text-align: center;"><input type="radio" disabled v-if="tblTrInclus.inclusion" checked></td>
+                <td style="border: 1px solid black;text-align: center;"><input type="radio" disabled v-if="tblTrInclus.exclusion" checked></td>
+              </tr>
+            </tbody>
           </table>
         </td>
       </tr>
-      <tr v-for="trAttr in tbody.cRowAttr">
-        <td v-for="tdAttr in trAttr.cellAttr" :colspan="tdSubact.colSpan" :class="{cellBorderRight: tdAttr.borderRight === true, cellBorderLeft: tdAttr.borderLeft === true, firstCell: tdAttr.isFirstCell === true}">
+      <tr v-for="trAttr in tbody.eRowAttr">
+        <td v-for="tdAttr in trAttr.cellAttr" :colspan="tdAttr.colSpan" :class="{cellBorderRight: tdAttr.borderRight === true, cellBorderLeft: tdAttr.borderLeft === true, firstCell: tdAttr.isFirstCell === true}">
+          <table v-if='tdAttr.hasOwnProperty("attribute") && tdAttr.attribute.length > 0'>
+            <thead>
+              <tr>
+                <th style="border: 1px solid black;">Field name</th>
+                <th style="border: 1px solid black;">Const value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="tblTrAttr in tdAttr.attribute">
+                <td style="border: 1px solid black;">{{ tblTrAttr.fieldName }}</td>
+                <td style="border: 1px solid black;">{{ tblTrAttr.constValue }}</td>
+              </tr>
+            </tbody>
+          </table>
           <dl v-if="tdAttr.hasOwnProperty('actionName')"><dt>Subaction:</dt><dd>&nbsp;{{ tdSubact.actionName }}</dd></dl>
         </td>
       </tr>
@@ -148,27 +175,20 @@ createApp({
             let request = new XMLHttpRequest();
             request.open("GET", "/api/0.0.1/state-transition/" + eTargetWoName.target.value, true);
             request.onload = () => {
-                console.log("request")
-                console.dir(request)
                 let templ = respStateTransitTempl(eTargetWoName.target.value, request);
                 if (templ != null) {
                     this.data.content.push(templ)
-                    console.log("templ")
-                    console.dir(templ)
                 }
             }
             request.send()
         },
         onUpdatedPreFormat: function() {
             if (this.data.content.length > 0) {
-                // $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth / 2})
                 $(".thState").css({width: 100 / $(".thState").length + '%'})
             }
         },
         onUpdatedHasArrow: function() {
             if (this.data.content.length > 0) {
-                console.log("onUpdatedHasArrow this.reference.tdArrow " + this.reference.tdArrow);
-                console.dir(this.reference)
                 for (let arrow of this.reference.tdArrow) {
                     let direct = 0, pos = [];
                     if (arrow.stateTitle.length === 2 /*&& arrow[0] !== arrow[1]*/) {
@@ -180,8 +200,6 @@ createApp({
         },
         drawArrow(direct, canvas) {
             let drawPlainArrow = function (beginX, endX, rowY, direct, canvas){
-                console.log("drawArrow drawPlainArrow " + beginX + ' ' + endX + ' ' + rowY);
-                console.dir(canvas);
                 let canvasContext = canvas.getContext("2d");
                 canvasContext.fillStyle = 'steelblue';
                 canvasContext.strokeStyle = 'steelblue';
@@ -231,8 +249,8 @@ createApp({
         // console.log("beforeUpdated");
     },
     updated() {
-        console.log("updated");
-        console.dir(this.data.content);
+        // console.log("updated");
+        // console.dir(this.data.content);
         this.onUpdatedHasArrow();
         this.onUpdatedPreFormat()
     },
