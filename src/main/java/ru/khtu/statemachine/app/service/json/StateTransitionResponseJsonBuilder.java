@@ -19,15 +19,11 @@ public interface StateTransitionResponseJsonBuilder {
     StateTransitionResponseJsonBuilder setSubaction(
             StateTransitionSubactionMapperHelperDto stateTransitionSubactionMapperHelperDto );
 
-    StateTransitionResponseJsonBuilder setInclusion(
-//            List<Map<String, Object>> subactionDao
-//            StateTransitSubactionInclusionMapperDto stateTransitSubactionInclusionMapperDto
-    );
+    StateTransitionResponseJsonBuilder setInclusion();
 
-    StateTransitionResponseJsonBuilder setAttribute(
-//            List<Map<String, Object>> subactionDao
-//            StateTransitSubactionAttributeMapperDto stateTransitSubactionAttributeMapperDto
-    );
+    StateTransitionResponseJsonBuilder setAttribute();
+
+    StateTransitionResponseJsonBuilder setModuleForm();
 
     Map<String, Object> build();
 

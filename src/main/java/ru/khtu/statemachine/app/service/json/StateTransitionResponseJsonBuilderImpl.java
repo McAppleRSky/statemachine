@@ -9,6 +9,7 @@ import ru.khtu.statemachine.app.data.helper.StateTransitionHelper;
 import ru.khtu.statemachine.app.data.helper.StateTransitionSubactionHelper;
 import ru.khtu.statemachine.app.mapper.AttributeMapper;
 import ru.khtu.statemachine.app.mapper.InclusionMapper;
+import ru.khtu.statemachine.app.mapper.ModuleFormMapper;
 import ru.khtu.statemachine.app.mapper.StateMapperDto;
 import ru.khtu.statemachine.app.mapper.helper.jackson.StateTransitionJacksonMapperHelperDto;
 import ru.khtu.statemachine.app.mapper.helper.StateTransitionMapperHelperDto;
@@ -114,6 +115,22 @@ public class StateTransitionResponseJsonBuilderImpl
                         ResponseKey.ATTRIBUTE.getString(),
                         AttributeMapper.mapListToListMap(stateTransitionSubaction.getStateTransitionSubactionAttributeDto()) );
 //                throw new NotImplementedException("Attribute not implemented");
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public StateTransitionResponseJsonBuilder setModuleForm() {
+        for (StateTransitionHelper stateTransitionHelper : this.tarnsitionData) {
+            if ( stateTransitionHelper.getStateTransitionSubaction() != null
+                    && stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionModuleFormDto() != null
+                    && !stateTransitionHelper.getStateTransitionSubaction().getStateTransitionSubactionModuleFormDto().isEmpty() ) {
+                StateTransitionSubactionHelper stateTransitionSubaction = stateTransitionHelper.getStateTransitionSubaction();
+                Map<String, Object> stringObjectMap = this.mapStateTransitionSubactionHelperToStringObject.get(stateTransitionSubaction);
+                stringObjectMap.put(
+                        ResponseKey.MODULE_FORM.getString(),
+                        ModuleFormMapper.mapListToListMap(stateTransitionSubaction.getStateTransitionSubactionModuleFormDto()) );
             }
         }
         return this;

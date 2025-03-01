@@ -28,6 +28,7 @@ public class StatemachineServiceImpl implements StatemachineService {
                 .setSubaction(stateTransitionSubactionMapperHelperDto)
                 .setInclusion()
                 .setAttribute()
+                .setModuleForm()
                 .build();
     }
 

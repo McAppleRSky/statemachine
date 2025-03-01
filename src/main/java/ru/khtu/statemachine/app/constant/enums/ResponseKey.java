@@ -19,7 +19,9 @@ public enum ResponseKey {
     INCLUSION(
             new String("inclusion") ),
     ATTRIBUTE(
-            new String("attribute") )
+            new String("attribute") ),
+    MODULE_FORM(
+            new String("moduleForm") )
     ;
 
     private final String string;

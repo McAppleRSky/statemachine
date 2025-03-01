@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.khtu.statemachine.app.data.dto.StateTransitionSubactionAttributeDto;
 import ru.khtu.statemachine.app.data.dto.StateTransitionSubactionInclusionDto;
+import ru.khtu.statemachine.app.data.dto.StateTransitionSubactionModuleFormDto;
 
 import java.util.List;
 
@@ -23,5 +24,7 @@ public class StateTransitionSubactionHelper {
     private List<StateTransitionSubactionInclusionDto> stateTransitionSubactionInclusionDto;
 
     private List<StateTransitionSubactionAttributeDto> stateTransitionSubactionAttributeDto;
+
+    public List<StateTransitionSubactionModuleFormDto> stateTransitionSubactionModuleFormDto;
 
 }
